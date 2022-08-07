@@ -34,4 +34,12 @@ public abstract class PlayerBaseState : State
         stateMachine.transform.rotation = lookRotation;
 
     }
+
+    protected void ReturnToLocomotion()
+    {
+        if (stateMachine.Targeter.CurrentTarget == null)
+            stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
+        else
+            stateMachine.SwitchState(new PlayerTargetingState(stateMachine));
+    }
 }

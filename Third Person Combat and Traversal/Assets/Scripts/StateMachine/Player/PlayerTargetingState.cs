@@ -10,11 +10,14 @@ public class PlayerTargetingState : PlayerBaseState
     readonly int targetRightHash = Animator.StringToHash("TargetRight");
 
     const float animTransitionSmoothingVal = 0.1f;
+
     public PlayerTargetingState(PlayerStateMachine stateMachine) : base(stateMachine){}
 
     public override void Enter()
     {
         stateMachine.InputReader.TargetEvent += OnCancel;
+        stateMachine.InputReader.DodgeEvent += HandleDodge;
+
         stateMachine.Animator.CrossFadeInFixedTime(targetingBlendTreeHash, 0.1f);
     }
 
@@ -30,8 +33,13 @@ public class PlayerTargetingState : PlayerBaseState
             stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
             return;
         }
+        if (stateMachine.InputReader.IsBlocking)
+        {
+            stateMachine.SwitchState(new PlayerBlockingState(stateMachine));
+            return;
+        }
 
-        Vector3 direction = CalculateDirection();
+        Vector3 direction = CalculateDirection(deltaTime);
 
         Move(direction * stateMachine.TargetLookSpeed, deltaTime);
 
@@ -42,6 +50,7 @@ public class PlayerTargetingState : PlayerBaseState
     public override void Exit()
     {
         stateMachine.InputReader.TargetEvent -= OnCancel;
+        stateMachine.InputReader.DodgeEvent -= HandleDodge;
     }
 
     private void OnCancel()
@@ -50,7 +59,14 @@ public class PlayerTargetingState : PlayerBaseState
         stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
     }
 
-    Vector3 CalculateDirection()
+    private void HandleDodge()
+    {
+        if (stateMachine.InputReader.MovementValue == Vector2.zero) return;
+
+        stateMachine.SwitchState(new PlayerDodgingState(stateMachine, stateMachine.InputReader.MovementValue));
+    }
+
+    Vector3 CalculateDirection(float deltaTime)
     {
         Vector3 direction = new();
 

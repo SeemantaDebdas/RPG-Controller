@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class WeaponDamage : MonoBehaviour
 {
+    [SerializeField] private Collider myCollider;
+
     List<Collider> alreadyCollidedWith = new();
     int damage = 0;
+    int knockback = 0;
 
     private void OnEnable()
     {
@@ -14,17 +17,25 @@ public class WeaponDamage : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")){ return; }
+        if (other == myCollider){ return; }
 
         if (alreadyCollidedWith.Contains(other)) return;
         alreadyCollidedWith.Add(other);
 
         if (other.TryGetComponent(out Health health))
+        {
             health.DealDamage(damage);
+        }
+        if(other.TryGetComponent(out ForceReceiver forceReceiver))
+        {
+            Vector3 direction = (other.transform.position - myCollider.transform.position).normalized;
+            forceReceiver.AddForce(knockback * direction);
+        }
     }
 
-    public void SetAttack(int damage)
+    public void SetAttack(int damage, int knockback)
     {
         this.damage = damage;
+        this.knockback = knockback;
     }
 }

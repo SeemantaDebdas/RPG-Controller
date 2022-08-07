@@ -22,8 +22,8 @@ public class EnemyIdleState : EnemyBaseState
     {
         Move(deltaTime);
         if (IsInRange())
-        {
-            //transition to chase state
+        { 
+            stateMachine.SwitchState(new EnemyChaseState(stateMachine));
             return;
         }
 
