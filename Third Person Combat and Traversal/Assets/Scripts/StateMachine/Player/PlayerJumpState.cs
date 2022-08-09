@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void Enter()
     {
+        stateMachine.LedgeDetector.OnLedgeDetection += HandleLedgeDetection;
         stateMachine.ForceReceiver.Jump(stateMachine.JumpForce);
 
         momentum = stateMachine.Controller.velocity;
@@ -24,11 +26,17 @@ public class PlayerJumpState : PlayerBaseState
         Move(momentum, deltaTime);
         if(stateMachine.Controller.velocity.y <= 0f)
         {
-            stateMachine.SwitchState(new PlayerFallState(stateMachine));
+            stateMachine.SwitchState(new PlayerFallingState(stateMachine));
         }
     }
 
     public override void Exit()
     {
+        stateMachine.LedgeDetector.OnLedgeDetection -= HandleLedgeDetection;
+    }
+
+    private void HandleLedgeDetection(Vector3 ledgeForward)
+    {
+        stateMachine.SwitchState(new PlayerHangingState(stateMachine, ledgeForward));
     }
 }

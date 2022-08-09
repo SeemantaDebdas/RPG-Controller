@@ -13,6 +13,7 @@ public class PlayerStateMachine : StateMachine
     [field: SerializeField] public Health Health { get; private set; }
     [field: SerializeField] public  WeaponDamage WeaponDamage{ get; private set; }
     [field: SerializeField] public Ragdoll Ragdoll { get; private set; }
+    [field: SerializeField] public LedgeDetector LedgeDetector { get; private set; }
     [field: SerializeField] public float FreeLookSpeed { get; private set; }
     [field: SerializeField] public float TargetLookSpeed { get; private set; }
     [field: SerializeField] public float RotationSpeed { get; private set; }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 53c47a415ae545a44823146b029444d7
+guid: 2cff2f3310e237e4688e7bf4caedebbb
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable:
@@ -18,7 +18,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
-    motionNodeName: mixamorig:Hips
+    motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 

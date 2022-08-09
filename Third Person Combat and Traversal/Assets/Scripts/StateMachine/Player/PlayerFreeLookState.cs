@@ -9,14 +9,21 @@ public class PlayerFreeLookState : PlayerBaseState
     readonly int freeLookBlendTreeHash = Animator.StringToHash("FreeLookBlendTree");
     const float animTransitionSmoothingVal = 0.1f;
 
-    public PlayerFreeLookState(PlayerStateMachine stateMachine) : base(stateMachine){}
+    bool shouldFade = false;
+
+    public PlayerFreeLookState(PlayerStateMachine stateMachine, bool shouldFade = true) : base(stateMachine)
+    {
+        this.shouldFade = shouldFade;
+    }
 
     public override void Enter()
     {
         stateMachine.InputReader.TargetEvent += OnTarget;
         stateMachine.InputReader.JumpEvent += OnJump;
-
-        stateMachine.Animator.CrossFadeInFixedTime(freeLookBlendTreeHash, 0.1f);
+        if(shouldFade)
+            stateMachine.Animator.CrossFadeInFixedTime(freeLookBlendTreeHash, 0.1f);
+        else
+            stateMachine.Animator.Play(freeLookBlendTreeHash);
     }
 
 

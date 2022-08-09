@@ -1,18 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerFallState : PlayerBaseState
+public class PlayerFallingState : PlayerBaseState
 {
     readonly int fallHash = Animator.StringToHash("Fall");
 
     const float crossFadeDuration = 0.1f;
 
     Vector3 momentum = Vector3.zero;
-    public PlayerFallState(PlayerStateMachine stateMachine) : base(stateMachine) { }
+    public PlayerFallingState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
+        stateMachine.LedgeDetector.OnLedgeDetection += HandleLedgeDetection;
+
         momentum = stateMachine.Controller.velocity;
         momentum.y = 0;
 
@@ -24,12 +27,17 @@ public class PlayerFallState : PlayerBaseState
 
         if (stateMachine.Controller.isGrounded)
         {
-            Debug.Log("Entering Grounded State");
             stateMachine.SwitchState(new PlayerFreeLookState(stateMachine));
         }
     }
 
     public override void Exit()
     {
+        stateMachine.LedgeDetector.OnLedgeDetection -= HandleLedgeDetection;
+    }
+
+    private void HandleLedgeDetection(Vector3 ledgeForward)
+    {
+        stateMachine.SwitchState(new PlayerHangingState(stateMachine, ledgeForward));
     }
 }
